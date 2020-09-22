@@ -1,7 +1,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const execa = require('execa')
-const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer-core')
 const moment = require('moment')
 const { EPERM } = require('constants')
 
@@ -67,11 +67,14 @@ afterAll(async () => {
 
 describe('vite', () => {
   beforeAll(async () => {
-    browser = await puppeteer.launch(
-      process.env.CI
+    browser = await puppeteer.launch({
+      executablePath: path.resolve(
+        '/Applications/Chromium.app/Contents/MacOS/Chromium'
+      ),
+      ...(process.env.CI
         ? { args: ['--no-sandbox', '--disable-setuid-sandbox'] }
-        : {}
-    )
+        : {})
+    })
   })
 
   function declareTests(isBuild) {
